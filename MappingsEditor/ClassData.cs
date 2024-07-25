@@ -34,22 +34,21 @@ namespace MappingsEditor {
         }
 
         public static string SerializeClassDataList(List<ClassData> classDataList) {
-            var filteredClassDataList = new List<object>();
+            var filteredClassDataDict = new Dictionary<string, object>();
 
             foreach (var classData in classDataList) {
-                if (classData.Name == "" || classData.ObfuscatedName == "") continue;
+                if (string.IsNullOrEmpty(classData.Name) || string.IsNullOrEmpty(classData.ObfuscatedName)) continue;
 
                 var filteredFields = classData.Fields.FindAll(IsMemberDataValid);
                 var filteredMethods = classData.Methods.FindAll(IsMemberDataValid);
 
                 var filteredClassData = new {
-                    classData.Name,
                     classData.ObfuscatedName,
                     Fields = filteredFields,
                     Methods = filteredMethods
                 };
 
-                filteredClassDataList.Add(filteredClassData);
+                filteredClassDataDict[classData.Name] = filteredClassData;
             }
 
             var options = new JsonSerializerOptions {
@@ -57,7 +56,7 @@ namespace MappingsEditor {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
-            return JsonSerializer.Serialize(filteredClassDataList, options);
+            return JsonSerializer.Serialize(filteredClassDataDict, options);
         }
 
         private static bool IsMemberDataValid(MemberData member) {
@@ -71,14 +70,38 @@ namespace MappingsEditor {
                 PropertyNameCaseInsensitive = true
             };
 
-            var classDataList = JsonSerializer.Deserialize<List<ClassData>>(json, options) ?? new List<ClassData>();
+            var classDataDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json, options) ?? new Dictionary<string, JsonElement>();
+            var classDataList = new List<ClassData>();
 
-            foreach (var classData in classDataList) {
+            foreach (var kvp in classDataDict) {
+                var classData = new ClassData {
+                    Name = kvp.Key,
+                    ObfuscatedName = kvp.Value.GetProperty("ObfuscatedName").GetString() ?? ""
+                };
+
+                classData.Fields = DeserializeMemberDataList(kvp.Value.GetProperty("Fields"));
+                classData.Methods = DeserializeMemberDataList(kvp.Value.GetProperty("Methods"));
+
                 classData.Fields = classData.Fields.FindAll(IsMemberDataValid);
                 classData.Methods = classData.Methods.FindAll(IsMemberDataValid);
+
+                classDataList.Add(classData);
             }
 
             return classDataList;
+        }
+
+        private static List<MemberData> DeserializeMemberDataList(JsonElement jsonElement) {
+            var memberDataList = new List<MemberData>();
+
+            foreach (var item in jsonElement.EnumerateArray()) {
+                var memberData = JsonSerializer.Deserialize<MemberData>(item.GetRawText(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (memberData != null) {
+                    memberDataList.Add(memberData);
+                }
+            }
+
+            return memberDataList;
         }
     }
 }
