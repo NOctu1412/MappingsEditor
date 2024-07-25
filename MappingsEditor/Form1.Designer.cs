@@ -75,14 +75,14 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(103, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(103, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
@@ -200,6 +200,7 @@
             fieldsGrid.TabIndex = 0;
             fieldsGrid.CellContentClick += dataGridView1_CellContentClick;
             fieldsGrid.CellEndEdit += fieldsGrid_CellEndEdit;
+            fieldsGrid.UserDeletedRow += fieldsGrid_UserDeletedRow;
             // 
             // fieldName
             // 
@@ -253,6 +254,7 @@
             methodsGrid.Size = new Size(563, 276);
             methodsGrid.TabIndex = 1;
             methodsGrid.CellEndEdit += methodsGrid_CellEndEdit;
+            methodsGrid.UserDeletedRow += methodsGrid_UserDeletedRow;
             // 
             // methodName
             // 

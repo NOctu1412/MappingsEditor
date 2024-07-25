@@ -111,21 +111,25 @@ namespace MappingsEditor {
             MarkAsModified();
         }
 
+        private static MemberData GetMemberDataFromRow(DataGridViewRow row) {
+            DataGridViewCellCollection cells = row.Cells;
+            object? cell3Value = cells[3].Value;
+            bool isStatic = cell3Value == null ? false : (cell3Value is bool ? (bool)cell3Value : (cell3Value is string ? (string)cell3Value == "Static" : throw new Exception("Unable to find type of cell[3]")));
+            return new MemberData(
+                    (string?)cells[0].Value,
+                    (string?)cells[1].Value,
+                    (string?)cells[2].Value,
+                    isStatic
+                );
+        }
+
         private void fieldsGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e) {
             if (classesList.SelectedItem == null) return;
             ClassData classData = (ClassData)classesList.SelectedItem;
             classData.Fields.Clear();
 
             foreach (DataGridViewRow fieldRow in fieldsGrid.Rows) {
-                DataGridViewCellCollection cells = fieldRow.Cells;
-                object? cell3Value = cells[3].Value;
-                bool isStatic = cell3Value == null ? false : (cell3Value is bool ? (bool)cell3Value : (cell3Value is string ? (string)cell3Value == "Static" : throw new Exception("Unable to find type of cell[3]")));
-                classData.Fields.Add(new MemberData(
-                    (string?)cells[0].Value,
-                    (string?)cells[1].Value,
-                    (string?)cells[2].Value,
-                    isStatic
-                ));
+                classData.Fields.Add(GetMemberDataFromRow(fieldRow));
             }
             MarkAsModified();
         }
@@ -136,15 +140,7 @@ namespace MappingsEditor {
             classData.Methods.Clear();
 
             foreach (DataGridViewRow methodRow in methodsGrid.Rows) {
-                DataGridViewCellCollection cells = methodRow.Cells;
-                object? cell3Value = cells[3].Value;
-                bool isStatic = cell3Value == null ? false : (cell3Value is bool ? (bool)cell3Value : (cell3Value is string ? (string)cell3Value == "Static" : throw new Exception("Unable to find type of cell[3]")));
-                classData.Methods.Add(new MemberData(
-                    (string?)cells[0].Value,
-                    (string?)cells[1].Value,
-                    (string?)cells[2].Value,
-                    isStatic
-                ));
+                classData.Methods.Add(GetMemberDataFromRow(methodRow));
             }
             MarkAsModified();
         }
@@ -206,6 +202,30 @@ namespace MappingsEditor {
             if (e.Control && e.KeyCode == Keys.O) {
                 openToolStripMenuItem_Click(sender, e);
                 e.SuppressKeyPress = true;
+            }
+        }
+
+        private void fieldsGrid_UserDeletedRow(object sender, DataGridViewRowEventArgs e) {
+            if (classesList.SelectedItem == null) return;
+            MemberData removedMemberData = GetMemberDataFromRow(e.Row);
+            ClassData classData = (ClassData)classesList.SelectedItem;
+            foreach (var field in classData.Fields) {
+                if (field.Name == removedMemberData.Name && field.Descriptor == removedMemberData.Descriptor) {
+                    classData.Fields.Remove(field);
+                    return;
+                }
+            }
+        }
+
+        private void methodsGrid_UserDeletedRow(object sender, DataGridViewRowEventArgs e) {
+            if (classesList.SelectedItem == null) return;
+            MemberData removedMemberData = GetMemberDataFromRow(e.Row);
+            ClassData classData = (ClassData)classesList.SelectedItem;
+            foreach (var method in classData.Methods) {
+                if (method.Name == removedMemberData.Name && method.Descriptor == removedMemberData.Descriptor) {
+                    classData.Methods.Remove(method);
+                    return;
+                }
             }
         }
     }
