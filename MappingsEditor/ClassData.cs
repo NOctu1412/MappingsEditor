@@ -53,7 +53,7 @@ namespace MappingsEditor {
             }
 
             var options = new JsonSerializerOptions {
-                WriteIndented = true,
+                WriteIndented = false,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
