@@ -48,6 +48,7 @@
             methodObfuscatedName = new DataGridViewTextBoxColumn();
             methodDescriptor = new DataGridViewTextBoxColumn();
             methodAccessor = new DataGridViewCheckBoxColumn();
+            toCHeaderToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             classTabs.SuspendLayout();
             fieldsTab.SuspendLayout();
@@ -67,7 +68,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, openToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, openToolStripMenuItem, toCHeaderToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -75,14 +76,14 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(103, 22);
+            saveToolStripMenuItem.Size = new Size(180, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(103, 22);
+            openToolStripMenuItem.Size = new Size(180, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
@@ -287,6 +288,13 @@
             methodAccessor.SortMode = DataGridViewColumnSortMode.Automatic;
             methodAccessor.TrueValue = "Static";
             // 
+            // toCHeaderToolStripMenuItem
+            // 
+            toCHeaderToolStripMenuItem.Name = "toCHeaderToolStripMenuItem";
+            toCHeaderToolStripMenuItem.Size = new Size(180, 22);
+            toCHeaderToolStripMenuItem.Text = "To C header";
+            toCHeaderToolStripMenuItem.Click += toCHeaderToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -343,5 +351,6 @@
         private DataGridViewTextBoxColumn obfuscatedFieldName;
         private DataGridViewTextBoxColumn fieldDescriptor;
         private DataGridViewCheckBoxColumn fieldAccessor;
+        private ToolStripMenuItem toCHeaderToolStripMenuItem;
     }
 }

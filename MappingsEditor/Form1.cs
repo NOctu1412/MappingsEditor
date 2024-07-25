@@ -228,5 +228,15 @@ namespace MappingsEditor {
                 }
             }
         }
+
+        private void toCHeaderToolStripMenuItem_Click(object sender, EventArgs e) {
+            string json = ClassData.SerializeClassDataList(classesList.Items.Cast<ClassData>().ToList());
+            string cHeader = 
+                @"namespace Mappings {
+    constexpr static char MappingsFile[] = R""(" + json + @")"";
+}";
+            Clipboard.SetText(cHeader);
+            MessageBox.Show("Copied header to clipboard, you can use it with any cpp json parser !");
+        }
     }
 }
